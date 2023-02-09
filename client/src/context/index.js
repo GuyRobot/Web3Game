@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import { createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3Modal from "web3modal"
 import { ethers } from "ethers";
 import { ABI, CONTRACT_ADDRESS } from "../contract";
 
-const StateContext = useContext()
+const StateContext = createContext()
 
 export const StateContextProvider = ({ children }) => {
 
@@ -45,3 +45,5 @@ export const StateContextProvider = ({ children }) => {
         {children}
     </StateContext.Provider>
 }
+
+export const useStateContext = () => useContext(StateContext);

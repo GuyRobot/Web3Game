@@ -1,11 +1,28 @@
 import React from 'react';
 import PageContainer from './PageContainer';
+import { useStateContext } from "../context";
 
 const Home = () => {
+
+  const { walletAddress, contract } = useStateContext()
+
   return (
-    <div>
-      
-    </div>
+    walletAddress && (
+      <div className="flex flex-col">
+        <CustomInput
+          label="Name"
+          placeHolder="Enter your player name"
+          value={playerName}
+          handleValueChange={setPlayerName}
+        />
+
+        <CustomButton
+          title="Register"
+          handleClick={handleClick}
+          restStyles="mt-6"
+        />
+      </div>
+    )
   )
 };
 

@@ -16,6 +16,7 @@ export const StateContextProvider = ({ children }) => {
     const [provider, setProvider] = useState('');
     const [showAlert, setShowAlert] = useState({ status: false, type: "info", message: '' })
     const [battleName, setBattleName] = useState('');
+    const [gameState, setGameState] = useState({players: [], pendingBattles: [], activeBattle: null})
 
     const updateCurrentWalletAddress = async () => {
         const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
@@ -61,7 +62,28 @@ export const StateContextProvider = ({ children }) => {
         }
     }, [contract])
 
-    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName }}>
+    // Fetch game data
+    useEffect(() => {
+        const fetchGameData = async () => {
+            const battles = await contract.getAllBattles();
+            const pendingBattles = battles.filter((battle) => battle.battleStatus === 0)
+            let activeBattle = null;
+
+            battles.forEach(battle => {
+                if (battle.players.find((player) => player.toLowerCase() === walletAddress.toLowerCase())) {
+                    if (battle.winner.startWith('0x00')) {
+                        activeBattle = battle;
+                    }
+                }
+            });
+
+            setGameState({players: pendingBattles, pendingBattles: pendingBattles.slice(1), activeBattle})   
+        }
+
+        fetchGameData()
+    }, [contract])
+
+    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameState }}>
         {children}
     </StateContext.Provider>)
 }

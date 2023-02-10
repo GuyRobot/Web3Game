@@ -7,7 +7,7 @@ import styles from '../styles';
 
 const CreateBattle = () => {
   const navigate = useNavigate()
-  const { contract, battleName, setBattleName } = useStateContext()
+  const { contract, battleName, setBattleName, gameState } = useStateContext()
   const [waitGame, setWaitGame] = useState(false);
 
   const handleClick = async () => {
@@ -19,6 +19,12 @@ const CreateBattle = () => {
       console.log("Error create battle", error);
     }
   }
+
+  useEffect(() => {
+    if (gameState?.activeBattle?.battleStatus === 0) {
+      setWaitGame(true)
+    }
+  }, [gameState])
 
   return (
     <>

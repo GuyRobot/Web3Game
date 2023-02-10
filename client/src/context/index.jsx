@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Web3Modal from "web3modal"
 import { ethers } from "ethers";
 import { ABI, CONTRACT_ADDRESS } from "../contract";
+import { createEventListeners } from "./createEventListeners";
 
 const StateContext = createContext()
 
@@ -51,6 +52,13 @@ export const StateContextProvider = ({ children }) => {
             return () => clearTimeout(timer);
         }
     }, [showAlert])
+
+    // Add event listener
+    useEffect(() => {
+        if (contract) {
+            createEventListeners(navigate, contract, provider, walletAddress, setShowAlert)
+        }
+    }, [contract])
 
     return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert }}>
         {children}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageContainer from './PageContainer';
 import { useStateContext } from "../context";
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ const Home = () => {
       if (!isPlayer) {
         await contract.registerPlayer(playerName, playerName);
 
-        setShowAlert({status: true, type: "info", message: `${playerName} is being created`})
+        setShowAlert({ status: true, type: "info", message: `${playerName} is being created` })
 
         setTimeout(() => {
           navigate('/create-battle')
@@ -27,8 +27,21 @@ const Home = () => {
     }
   }
 
+  useEffect(() => {
+    const checkRedirect = async () => {
+      const isPlayer = await contract.isPlayer(walletAddress);
+      const playerTokenExists = await contract.isPlayerToken(walletAddress);
+
+      if (isPlayer && playerTokenExists) {
+        navigate('/create-battle');
+      }
+    }
+
+    if (contract) checkRedirect()
+  }, [contract])
+
   return (
-    walletAddress && (
+    (
       <div className="flex flex-col">
         <InputField
           label="Name"

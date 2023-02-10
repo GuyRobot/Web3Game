@@ -56,7 +56,7 @@ export const StateContextProvider = ({ children }) => {
     // Add event listener
     useEffect(() => {
         if (contract) {
-            createEventListeners(navigate, contract, provider, walletAddress, setShowAlert)
+            createEventListeners({navigate, contract, provider, walletAddress, setShowAlert})
         }
     }, [contract])
 

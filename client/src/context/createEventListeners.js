@@ -12,6 +12,7 @@ const addNewEvent = (eventFilter, provider, cb) => {
 }
 
 export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert }) => {
+    console.log("contract", contract);
     const newPlayerEventFilter = contract.filters.NewPlayer();
 
     addNewEvent(newPlayerEventFilter, provider, ({ args }) => {

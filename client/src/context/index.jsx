@@ -15,6 +15,7 @@ export const StateContextProvider = ({ children }) => {
     const [contract, setContract] = useState('');
     const [provider, setProvider] = useState('');
     const [showAlert, setShowAlert] = useState({ status: false, type: "info", message: '' })
+    const [battleName, setBattleName] = useState('');
 
     const updateCurrentWalletAddress = async () => {
         const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
@@ -56,11 +57,11 @@ export const StateContextProvider = ({ children }) => {
     // Add event listener
     useEffect(() => {
         if (contract) {
-            createEventListeners({navigate, contract, provider, walletAddress, setShowAlert})
+            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert })
         }
     }, [contract])
 
-    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert }}>
+    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName }}>
         {children}
     </StateContext.Provider>)
 }

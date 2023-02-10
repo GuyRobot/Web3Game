@@ -2,11 +2,16 @@ import React from 'react'
 import { useNavigate } from "react-router-dom";
 import styles from '../styles';
 import { logo, heroImg } from '../assets'
+import { useStateContext } from '../context';
+import { Alert } from '../components';
 
 const PageContainer = (Component, title, description) => () => {
     const navigate = useNavigate();
+    const { showAlert } = useStateContext()
     return (
         <div className={styles.hocContainer}>
+            {showAlert?.status && <Alert type={showAlert.type} message={showAlert.message} />}
+
             <div className={styles.hocContentBox}>
                 <img src={logo} alt='logo' className={styles.hocLogo} onClick={() => navigate('/')} />
                 <div className={styles.hocBodyWrapper}>
@@ -18,7 +23,10 @@ const PageContainer = (Component, title, description) => () => {
                 </div>
                 <p className={`${styles.footerText}`}>@Copyright 2023, Avax Gds</p>
             </div>
-            <img src={heroImg} alt='hero' className='flex flex-1 w-full xl:h-full' />
+
+            <div className='flex flex-1'>
+                <img src={heroImg} alt='hero' className='w-full xl:h-full object-cover' />
+            </div>
         </div>
     )
 }

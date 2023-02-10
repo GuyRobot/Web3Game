@@ -1,15 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PageContainer from './PageContainer';
 import { useStateContext } from "../context";
+import { useNavigate } from 'react-router-dom';
+import { CustomButton, InputField } from '../components';
 
 const Home = () => {
 
-  const { walletAddress, contract } = useStateContext()
+  const { walletAddress, contract, setShowAlert } = useStateContext()
+  const [playerName, setPlayerName] = useState('')
+  const navigate = useNavigate()
+
+  const handleClick = async () => {
+    try {
+      const isPlayer = await contract.isPlayer(walletAddress);
+      if (!isPlayer) {
+        await contract.registerPlayer(playerName, playerName);
+
+        setShowAlert({status: true, type: "info", message: `${playerName} is being created`})
+
+        setTimeout(() => {
+          navigate('/create-battle')
+        }, 8000);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
 
   return (
     walletAddress && (
       <div className="flex flex-col">
-        <CustomInput
+        <InputField
           label="Name"
           placeHolder="Enter your player name"
           value={playerName}

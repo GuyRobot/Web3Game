@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3Modal from "web3modal"
 import { ethers } from "ethers";
@@ -13,7 +13,7 @@ export const StateContextProvider = ({ children }) => {
     const [walletAddress, setWalletAddress] = useState('');
     const [contract, setContract] = useState('');
     const [provider, setProvider] = useState('');
-
+    const [showAlert, setShowAlert] = useState({ status: false, type: "info", message: '' })
 
     const updateCurrentWalletAddress = async () => {
         const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
@@ -29,8 +29,8 @@ export const StateContextProvider = ({ children }) => {
         // Set contract and provider
         const setContractAndProvider = async () => {
             const web3Model = new Web3Modal();
-            const connection = web3Model.connect();
-            const newProvider = ethers.providers.Web3Provider(connection);
+            const connection = await web3Model.connect();
+            const newProvider = new ethers.providers.Web3Provider(connection);
             const signer = newProvider.getSigner();
             const newContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
 
@@ -41,9 +41,20 @@ export const StateContextProvider = ({ children }) => {
         setContractAndProvider();
     }, [])
 
-    return <StateContext.Provider value={{ contract, provider, walletAddress }}>
+    // Show alert
+    useEffect(() => {
+        if (showAlert?.status) {
+            const timer = setTimeout(() => {
+                setShowAlert({ status: false, type: "info", message: "" })
+            }, [5000]);
+
+            return () => clearTimeout(timer);
+        }
+    }, [showAlert])
+
+    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert }}>
         {children}
-    </StateContext.Provider>
+    </StateContext.Provider>)
 }
 
 export const useStateContext = () => useContext(StateContext);

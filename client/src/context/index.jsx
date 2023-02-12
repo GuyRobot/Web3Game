@@ -17,6 +17,8 @@ export const StateContextProvider = ({ children }) => {
     const [showAlert, setShowAlert] = useState({ status: false, type: "info", message: '' })
     const [battleName, setBattleName] = useState('');
     const [gameState, setGameState] = useState({players: [], pendingBattles: [], activeBattle: null})
+    const [triggerUpdateGame, setTriggerUpdateGame] = useState(0) // Change it to trigger update game state
+    const [battleGround, setBattleGround] = useState('bg-astral')
 
     const updateCurrentWalletAddress = async () => {
         const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
@@ -58,7 +60,7 @@ export const StateContextProvider = ({ children }) => {
     // Add event listener
     useEffect(() => {
         if (contract) {
-            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert })
+            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame })
         }
     }, [contract])
 
@@ -81,9 +83,9 @@ export const StateContextProvider = ({ children }) => {
         }
 
         fetchGameData()
-    }, [contract])
+    }, [contract, triggerUpdateGame])
 
-    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameState }}>
+    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameState, battleGround, setBattleGround }}>
         {children}
     </StateContext.Provider>)
 }

@@ -11,7 +11,7 @@ const addNewEvent = (eventFilter, provider, cb) => {
     })
 }
 
-export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert }) => {
+export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame }) => {
     console.log("contract", contract);
     const newPlayerEventFilter = contract.filters.NewPlayer();
 
@@ -19,5 +19,15 @@ export const createEventListeners = ({ navigate, contract, provider, walletAddre
         if (walletAddress === args.owner) {
             setShowAlert({ status: true, type: "success", message: "Player has been created" })
         }
+    })
+
+    const newBattleEventFilter = contract.filters.NewBattle();
+    addNewEvent(newBattleEventFilter, provider, ({ args }) => {
+        if (walletAddress.toLowerCase() === args.player1.toLowerCase()
+            || walletAddress.toLowerCase() === args.player2.toLowerCase()) {
+            navigate(`battle/${args.battleName}`)
+        }
+
+        setTriggerUpdateGame((prev) => prev + 1)
     })
 }

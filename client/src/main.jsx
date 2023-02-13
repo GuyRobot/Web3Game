@@ -5,10 +5,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Home, CreateBattle, JoinBattle, Battle } from './page';
 import './index.css';
 import { StateContextProvider } from './context';
+import OnboardModal from './components/OnboardModal';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StateContextProvider>
+      <OnboardModal />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create-battle" element={<CreateBattle />} />

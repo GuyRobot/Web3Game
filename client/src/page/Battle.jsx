@@ -4,10 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, ActionButton, Card, GameInfo, PlayerInfo } from '../components';
 import { attack, attackSound, defense, defenseSound, player01 as player01Icon, player02 as player02Icon } from '../assets';
 import styles from '../styles';
+import { playAudio } from '../utils/animation';
 
 function Battle() {
 
-    const { contract, gameState, battleGround, walletAddress, showAlert, setShowAlert } = useStateContext()
+    const { contract, gameState, battleGround, walletAddress, showAlert, setShowAlert, setErrorMessage, player1Ref, player2Ref } = useStateContext()
     const [player1, setPlayer1] = useState({});
     const [player2, setPlayer2] = useState({});
     const { battleName } = useParams();
@@ -58,8 +59,16 @@ function Battle() {
         return () => clearTimeout(timer);
     }, []);
 
-    const makeAMove = () => {
+    const makeAMove = async (type) => {
+        playAudio(type === 1 ? attackSound : defenseSound)
 
+        try {
+            await contract.attackOrDefendChoice(type, battleName)
+
+            setShowAlert({ status: true, type: 'info', message: `Initializing ${type === 1 ? 'attack' : 'defense'}` })
+        } catch (error) {
+            setErrorMessage(error)
+        }
     }
 
     return (

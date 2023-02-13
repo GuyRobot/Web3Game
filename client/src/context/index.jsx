@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Web3Modal from "web3modal"
 import { ethers } from "ethers";
 import { ABI, CONTRACT_ADDRESS } from "../contract";
 import { createEventListeners } from "./createEventListeners";
+import { GetParams } from "../utils/onboard";
 
 const StateContext = createContext()
 
@@ -16,9 +17,14 @@ export const StateContextProvider = ({ children }) => {
     const [provider, setProvider] = useState('');
     const [showAlert, setShowAlert] = useState({ status: false, type: "info", message: '' })
     const [battleName, setBattleName] = useState('');
-    const [gameState, setGameState] = useState({players: [], pendingBattles: [], activeBattle: null})
+    const [gameState, setGameState] = useState({ players: [], pendingBattles: [], activeBattle: null })
     const [triggerUpdateGame, setTriggerUpdateGame] = useState(0) // Change it to trigger update game state
     const [battleGround, setBattleGround] = useState('bg-astral')
+    const [step, setStep] = useState(0)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const player1Ref = useRef()
+    const player2Ref = useRef()
 
     const updateCurrentWalletAddress = async () => {
         const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
@@ -60,7 +66,7 @@ export const StateContextProvider = ({ children }) => {
     // Add event listener
     useEffect(() => {
         if (contract) {
-            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame })
+            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame, player1Ref, player2Ref })
         }
     }, [contract])
 
@@ -79,13 +85,52 @@ export const StateContextProvider = ({ children }) => {
                 }
             });
 
-            setGameState({players: pendingBattles, pendingBattles: pendingBattles.slice(1), activeBattle})   
+            setGameState({ players: pendingBattles, pendingBattles: pendingBattles.slice(1), activeBattle })
         }
 
         fetchGameData()
     }, [contract, triggerUpdateGame])
 
-    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameState, battleGround, setBattleGround }}>
+    // Battle ground
+    useEffect(() => {
+        const battleGround = localStorage.getItem('battleGround')
+        if (battleGround) {
+            setBattleGround(battleGround)
+        } else {
+            localStorage.setItem("battleGround", battleGround)
+        }
+    }, [])
+
+    // Reset onboard params
+    useEffect(() => {
+        const resetParams = async () => {
+            const currentStep = await GetParams()
+
+            setStep(currentStep.step)
+        }
+
+        resetParams()
+
+        window?.ethereum?.on("chainChanged", () => resetParams())
+        window?.ethereum?.on("accountsChanged", () => resetParams())
+    }, [])
+
+    //* Handle error messages
+    useEffect(() => {
+        if (errorMessage) {
+            const parsedErrorMessage = errorMessage?.reason?.slice('execution reverted: '.length).slice(0, -1);
+
+            if (parsedErrorMessage) {
+                setShowAlert({
+                    status: true,
+                    type: 'failure',
+                    message: parsedErrorMessage,
+                });
+            }
+        }
+    }, [errorMessage]);
+
+    return (<StateContext.Provider value={{ contract, provider, walletAddress, showAlert, setShowAlert, battleName, setBattleName, gameState, battleGround, setBattleGround, errorMessage, setErrorMessage, player1Ref, player2Ref }}>
         {children}
     </StateContext.Provider>)
 }

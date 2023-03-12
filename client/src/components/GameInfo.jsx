@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CustomButton from './CustomButton';
-import { useGlobalContext } from '../context';
+import { useStateContext } from '../context';
 import { alertIcon, gameRules } from '../assets';
 import styles from '../styles';
 
 const GameInfo = () => {
-  const { contract, gameData, setErrorMessage, setShowAlert } = useGlobalContext();
+  const { contract, gameData, setErrorMessage, setShowAlert } = useStateContext();
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const navigate = useNavigate();
 

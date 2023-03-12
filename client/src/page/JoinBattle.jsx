@@ -9,13 +9,19 @@ const JoinBattle = () => {
   const navigate = useNavigate()
   const { gameState, setBattleName, walletAddress, contract, setShowAlert } = useStateContext()
 
+  useEffect(() => {
+    if (gameState?.activeBattle?.battleStatus === 1) {
+      navigate(`battle/${gameState.activeBattle.name}`)
+    }
+  }, [gameState])
+
   const handleClick = async (battle) => {
     setBattleName(battle.name)
 
     try {
-      await contract.joinBattle()
+      await contract.joinBattle(battle.name, { gasLimit: 200000 })
 
-      setShowAlert({status: true, type: "success", message: `Joining ${battle.name}`})
+      setShowAlert({ status: true, type: "success", message: `Joining ${battle.name}` })
     } catch (error) {
       console.log("Error joining battle", error);
     }

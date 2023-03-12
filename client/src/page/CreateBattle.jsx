@@ -13,7 +13,7 @@ const CreateBattle = () => {
   const handleClick = async () => {
     if (!battleName || !battleName.trim()) return;
     try {
-      await contract.CreateBattle(battleName)
+      await contract.CreateBattle(battleName, { gasLimit: 200000 })
       setWaitGame(true);
     } catch (error) {
       console.log("Error create battle", error);

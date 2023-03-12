@@ -63,7 +63,7 @@ function Battle() {
         playAudio(type === 1 ? attackSound : defenseSound)
 
         try {
-            await contract.attackOrDefendChoice(type, battleName)
+            await contract.attackOrDefendChoice(type, battleName, { gasLimit: 200000 })
 
             setShowAlert({ status: true, type: 'info', message: `Initializing ${type === 1 ? 'attack' : 'defense'}` })
         } catch (error) {

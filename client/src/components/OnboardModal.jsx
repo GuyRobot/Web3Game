@@ -3,12 +3,12 @@ import Modal from 'react-modal';
 
 import styles from '../styles';
 import { CustomButton } from '.';
-import { useGlobalContext } from '../context';
+import { useStateContext } from '../context';
 import { GetParams, SwitchNetwork } from '../utils/onboard.js';
 
 const OnboardModal = () => {
   const [modalIsOpen, setIsOpen] = useState(false);
-  const { updateCurrentWalletAddress } = useGlobalContext();
+  const { updateCurrentWalletAddress } = useStateContext();
   const [step, setStep] = useState(-1);
 
   async function resetParams() {

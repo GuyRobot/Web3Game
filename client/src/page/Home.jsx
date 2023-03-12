@@ -6,7 +6,7 @@ import { CustomButton, InputField } from '../components';
 
 const Home = () => {
 
-  const { walletAddress, contract, setShowAlert } = useStateContext()
+  const { walletAddress, contract, setShowAlert, gameState, setErrorMessage } = useStateContext()
   const [playerName, setPlayerName] = useState('')
   const navigate = useNavigate()
 
@@ -14,7 +14,7 @@ const Home = () => {
     try {
       const isPlayer = await contract.isPlayer(walletAddress);
       if (!isPlayer) {
-        await contract.registerPlayer(playerName, playerName);
+        await contract.registerPlayer(playerName, playerName, { gasLimit: 200000 });
 
         setShowAlert({ status: true, type: "info", message: `${playerName} is being created` })
 
@@ -23,7 +23,7 @@ const Home = () => {
         }, 8000);
       }
     } catch (error) {
-      console.log("error", error);
+      setErrorMessage(error)
     }
   }
 
@@ -39,6 +39,12 @@ const Home = () => {
 
     if (contract) checkRedirect()
   }, [contract])
+
+  useEffect(() => {
+    if (gameState.activeBattle) {
+      navigate(`battle/${gameState.activeBattle.name}`)
+    }
+  }, [gameState])
 
   return (
     (

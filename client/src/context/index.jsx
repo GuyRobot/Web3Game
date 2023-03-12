@@ -66,7 +66,7 @@ export const StateContextProvider = ({ children }) => {
     // Add event listener
     useEffect(() => {
         if (contract) {
-            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame, player1Ref, player2Ref })
+            createEventListeners({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame, player1Ref, player2Ref, updateCurrentWalletAddress })
         }
     }, [contract])
 

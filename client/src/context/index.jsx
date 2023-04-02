@@ -26,8 +26,22 @@ export const StateContextProvider = ({ children }) => {
     const player1Ref = useRef()
     const player2Ref = useRef()
 
+    // Reset onboard params
+    useEffect(() => {
+        const resetParams = async () => {
+            const currentStep = await GetParams()
+
+            setStep(currentStep.step)
+        }
+
+        resetParams()
+
+        window?.ethereum?.on("chainChanged", () => resetParams())
+        window?.ethereum?.on("accountsChanged", () => resetParams())
+    }, [])
+
     const updateCurrentWalletAddress = async () => {
-        const accounts = await window?.ethereum?.request({ method: 'eth_requestAccounts' });
+        const accounts = await window?.ethereum?.request({ method: 'eth_accounts' });
 
         if (accounts) setWalletAddress(accounts[0]);
     }
@@ -36,6 +50,9 @@ export const StateContextProvider = ({ children }) => {
         updateCurrentWalletAddress();
 
         window?.ethereum?.on('accountsChanged', updateCurrentWalletAddress)
+    }, [])
+
+    useEffect(() => {
 
         // Set contract and provider
         const setContractAndProvider = async () => {
@@ -79,7 +96,7 @@ export const StateContextProvider = ({ children }) => {
 
             battles.forEach(battle => {
                 if (battle.players.find((player) => player.toLowerCase() === walletAddress.toLowerCase())) {
-                    if (battle.winner.startWith('0x00')) {
+                    if (battle.winner.startsWith('0x00')) {
                         activeBattle = battle;
                     }
                 }
@@ -88,31 +105,17 @@ export const StateContextProvider = ({ children }) => {
             setGameState({ players: pendingBattles, pendingBattles: pendingBattles.slice(1), activeBattle })
         }
 
-        fetchGameData()
+        if (contract) fetchGameData()
     }, [contract, triggerUpdateGame])
 
     // Battle ground
     useEffect(() => {
-        const battleGround = localStorage.getItem('battleGround')
-        if (battleGround) {
-            setBattleGround(battleGround)
+        const localBattleGround = localStorage.getItem('battleGround')
+        if (localBattleGround) {
+            setBattleGround(localBattleGround)
         } else {
             localStorage.setItem("battleGround", battleGround)
         }
-    }, [])
-
-    // Reset onboard params
-    useEffect(() => {
-        const resetParams = async () => {
-            const currentStep = await GetParams()
-
-            setStep(currentStep.step)
-        }
-
-        resetParams()
-
-        window?.ethereum?.on("chainChanged", () => resetParams())
-        window?.ethereum?.on("accountsChanged", () => resetParams())
     }, [])
 
     //* Handle error messages

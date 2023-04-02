@@ -13,7 +13,7 @@ const CreateBattle = () => {
   const handleClick = async () => {
     if (!battleName || !battleName.trim()) return;
     try {
-      await contract.CreateBattle(battleName, { gasLimit: 200000 })
+      await contract.createBattle(battleName, { gasLimit: 200000 })
       setWaitGame(true);
     } catch (error) {
       console.log("Error create battle", error);
@@ -21,8 +21,10 @@ const CreateBattle = () => {
   }
 
   useEffect(() => {
-    if (gameState?.activeBattle?.battleStatus === 0) {
-      setWaitGame(true)
+    if (gameState?.activeBattle?.battleStatus === 1) {
+      navigate(`/battle/${gameState.activeBattle.name}`);
+    } else if (gameState?.activeBattle?.battleStatus === 0) {
+      setWaitBattle(true);
     }
   }, [gameState])
 

@@ -14,7 +14,7 @@ const addNewEvent = (eventFilter, provider, cb) => {
 }
 
 const getCoords = (ele) => {
-    const { left, top, width, height } = ele.current.getBoudingClientRect()
+    const { left, top, width, height } = ele.current.getBoundingClientRect()
     return {
         pageX: left + width / 2,
         pageY: top + height / 2
@@ -22,7 +22,6 @@ const getCoords = (ele) => {
 }
 
 export const createEventListeners = ({ navigate, contract, provider, walletAddress, setShowAlert, setTriggerUpdateGame, player1Ref, player2Ref }) => {
-    console.log("contract", contract);
     const newPlayerEventFilter = contract.filters.NewPlayer();
 
     addNewEvent(newPlayerEventFilter, provider, ({ args }) => {
@@ -59,7 +58,7 @@ export const createEventListeners = ({ navigate, contract, provider, walletAddre
     addNewEvent(roundEndedEventFilter, provider, ({ args }) => {
         for (let index = 0; index < args.damagedPlayers.length; index++) {
             const damagedPlayer = args.damagedPlayers[index];
-            if (!damagedPlayer.startWith("0x00")) {
+            if (!damagedPlayer.startsWith("0x00")) {
                 if (damagedPlayer === walletAddress) {
                     sparcle(getCoords(player1Ref))
                 } else {

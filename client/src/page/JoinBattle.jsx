@@ -11,7 +11,7 @@ const JoinBattle = () => {
 
   useEffect(() => {
     if (gameState?.activeBattle?.battleStatus === 1) {
-      navigate(`battle/${gameState.activeBattle.name}`)
+      navigate(`/battle/${gameState.activeBattle.name}`)
     }
   }, [gameState])
 

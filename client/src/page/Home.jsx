@@ -14,7 +14,7 @@ const Home = () => {
     try {
       const isPlayer = await contract.isPlayer(walletAddress);
       if (!isPlayer) {
-        await contract.registerPlayer(playerName, playerName, { gasLimit: 200000 });
+        await contract.registerPlayer(playerName, playerName, { gasLimit: 500000 });
 
         setShowAlert({ status: true, type: "info", message: `${playerName} is being created` })
 

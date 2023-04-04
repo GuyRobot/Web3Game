@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import '@nomiclabs/hardhat-ethers';
+import "@nomiclabs/hardhat-etherscan"
 
 dotenv.config();
 
@@ -29,5 +30,8 @@ export default {
       chainId: 43113,
       accounts: [process.env.PRIVATE_KEY],
     },
+  },
+  etherscan: {
+    apiKey: "TR6TS4NSAVB97J57AW5ACRHJ8JWPCTTA2N",
   },
 }

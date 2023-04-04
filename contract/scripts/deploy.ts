@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat';
 import console from 'console';
+import "@nomiclabs/hardhat-etherscan"
 
 const _metadataUri = 'https://gateway.pinata.cloud/ipfs/https://gateway.pinata.cloud/ipfs/QmX2ubhtBPtYw75Wrpv6HLb1fhbJqxrnbhDo1RViW3oVoi';
 

@@ -24,7 +24,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
   uint256 public constant KUKULKAN = 4;
   uint256 public constant CELESTION = 5;
 
-  uint256 public constant MAX_ATTACK_DEFEND_STRENGTH = 10;
+  uint256 public constant MAX_ATTACK_DEFEND_STRENGTH = 15;
 
   enum BattleStatus{ PENDING, STARTED, ENDED }
 
@@ -151,7 +151,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
     require(!isPlayer(msg.sender), "Player already registered"); // Require that player is not already registered
     
     uint256 _id = players.length;
-    players.push(Player(msg.sender, _name, 10, 25, false)); // Adds player to players array
+    players.push(Player(msg.sender, _name, 15, 30, false)); // Adds player to players array
     playerInfo[msg.sender] = _id; // Creates player info mapping
 
     createRandomGameToken(_gameTokenName);
@@ -204,7 +204,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
   /// @param _name game token name; set by player
   function createRandomGameToken(string memory _name) public {
     require(!getPlayer(msg.sender).inBattle, "Player is in a battle"); // Require that player is not already in a battle
-    require(isPlayer(msg.sender), "Please Register Player First"); // Require that the player is registered
+    require(isPlayer(msg.sender), "Please register player first"); // Require that the player is registered
     
     _createGameToken(_name); // Creates game token
   }
@@ -216,7 +216,7 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
   /// @dev Creates a new battle
   /// @param _name battle name; set by player
   function createBattle(string memory _name) external returns (Battle memory) {
-    require(isPlayer(msg.sender), "Please Register Player First"); // Require that the player is registered
+    require(isPlayer(msg.sender), "Please register player first"); // Require that the player is registered
     require(!isBattle(_name), "Battle already exists!"); // Require battle with same name should not exist
 
     bytes32 battleHash = keccak256(abi.encode(_name));
@@ -451,12 +451,12 @@ contract AVAXGods is ERC1155, Ownable, ERC1155Supply {
     uint p2 = playerInfo[_battle.players[1]];
 
     players[p1].inBattle = false;
-    players[p1].playerHealth = 25;
-    players[p1].playerMana = 10;
+    players[p1].playerHealth = 30;
+    players[p1].playerMana = 15;
 
     players[p2].inBattle = false;
-    players[p2].playerHealth = 25;
-    players[p2].playerMana = 10;
+    players[p2].playerHealth = 30;
+    players[p2].playerMana = 15;
 
     address _battleLoser = battleEnder == _battle.players[0] ? _battle.players[1] : _battle.players[0];
 
